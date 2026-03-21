@@ -1,0 +1,3 @@
+[submodule "stella-libretro"]
+	path = stella-libretro
+	url = https://github.com/libretro/stella2023.git

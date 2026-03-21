@@ -1,0 +1,11 @@
+{
+  "name": "tasbot-atari",
+  "version-string": "0.1.0",
+  "dependencies": [
+    "protobuf",
+    "zlib",
+    "libpng",
+    "lz4",
+    "sdl2"
+  ]
+}
