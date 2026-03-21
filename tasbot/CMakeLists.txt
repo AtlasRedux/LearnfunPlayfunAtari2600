@@ -214,13 +214,11 @@ if(EXISTS "${STELLA_DIR}")
             /wd4804  # unsafe use of type bool
         )
     endif()
-    set(HAVE_STELLA TRUE)
 else()
-    message(WARNING
+    message(FATAL_ERROR
         "stella-libretro source not found at ../stella-libretro/src\n"
-        "Please clone: git clone https://github.com/libretro/stella2023.git ../stella-libretro\n"
-        "Building without emulator — only library targets will work.")
-    set(HAVE_STELLA FALSE)
+        "Run: git submodule update --init --recursive\n"
+        "Or clone with: git clone --recursive <repo-url>")
 endif()
 
 # --- TASBot core sources ---
@@ -286,9 +284,7 @@ target_link_libraries(tasbot_core PUBLIC
     ws2_32
 )
 
-if(HAVE_STELLA)
-    target_link_libraries(tasbot_core PUBLIC stella_core)
-endif()
+target_link_libraries(tasbot_core PUBLIC stella_core)
 
 # --- Executables ---
 
