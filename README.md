@@ -59,7 +59,32 @@ Binaries are output to `tasbot/build/Release/`.
 
 ## Usage
 
-All tools read a `config.txt` file in the working directory:
+The fastest way is the included GUI:
+
+```
+cd tasbot\build\Release
+pythonw tasbot_gui.pyw
+```
+
+Drop a `.a26` (or `.bin`) file into that folder (or use the **Browse…** button), then click through the four buttons in order:
+
+1. **🎮 Record (play game)** — opens an SDL window; play the game with the keyboard, ESC saves the input log as `<game>.a26inp`.
+2. **▶ Pretrain (learnfun)** — analyses the recording and writes `<game>.objectives`.
+3. **▶ Run (playfun)** — spawns one helper process per CPU core (configurable) plus a master. The AI plays the game and saves its best run so far to `<game>-playfun-futures-progress.a26inp` periodically. The **Resume** checkbox continues from an existing progress file.
+4. **🎬 Watch Replay** — opens `replayfun.exe` on the latest progress file, with audio and per-frame controls.
+
+The GUI auto-detects ROMs and input logs in its directory, manages the helper/master lifecycle, and streams the master's coloured progress bars to its log pane.
+
+**Keyboard controls in `recordfun`:**
+- Arrow keys: joystick directions
+- Z / Space: fire button
+- Enter: console reset
+- Tab: console select
+- ESC: quit and save
+
+### Manual command-line workflow
+
+If you'd rather skip the GUI, all tools read a `config.txt` file in the working directory:
 
 ```
 game pitfall
@@ -67,56 +92,19 @@ rom pitfall.a26
 movie pitfall.a26inp
 ```
 
-### 1. Record gameplay
-
-Place your ROM (e.g. `pitfall.a26`) and `config.txt` in the same directory as the executables, then:
-
 ```
-recordfun.exe
-```
+recordfun.exe       # Step 1 — record human play, writes <game>.a26inp
+learnfun.exe        # Step 2 — write <game>.objectives
 
-Play the game with arrow keys, Z/Space for fire, ESC to stop and save. The recording is saved as `<game>.a26inp`.
-
-**Keyboard controls:**
-- Arrow keys: joystick directions
-- Z / Space: fire button
-- Enter: console reset
-- Tab: console select
-- ESC: quit and save
-
-### 2. Learn objectives
-
-```
-learnfun.exe
-```
-
-Reads the `.a26inp` recording and outputs `<game>.objectives` — the discovered objective functions.
-
-### 3. Run the AI
-
-Start helpers (one per CPU core):
-
-```
+# Step 3 — start one helper per core, then the master:
 playfun.exe --helper 29000
 playfun.exe --helper 29001
-...
+playfun.exe --master 29000 29001 ...
+
+replayfun.exe       # Step 4 — watch the latest progress file
 ```
 
-Then start the master:
-
-```
-playfun.exe --master 29000 29001 29002 ...
-```
-
-The AI writes its best run so far to `<game>-playfun-futures-progress.a26inp` periodically.
-
-### 4. Watch the replay
-
-```
-replayfun.exe
-```
-
-Automatically finds the playfun progress file. Controls: Space (pause), arrow keys (speed/step), R (restart), M (mute), ESC (quit).
+`replayfun.exe` controls: Space (pause), Right (step), Up/Down (speed), R (restart), M (mute), ESC (quit).
 
 ## Architecture
 
